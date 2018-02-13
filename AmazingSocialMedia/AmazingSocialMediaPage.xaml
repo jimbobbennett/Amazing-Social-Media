@@ -6,56 +6,58 @@
              ios:Page.UseSafeArea="true"
              ios:Page.LargeTitleDisplay="Always"
              x:Class="AmazingSocialMedia.AmazingSocialMediaPage"
-             Title="New post" BackgroundColor="#ACBEC1">
+             Title="New post">
     <ContentPage.BindingContext>
         <local:AmazingSocialMediaViewModel/>
     </ContentPage.BindingContext>
-    <Frame CornerRadius="5" HasShadow="false"
-           HorizontalOptions="Fill"
-           VerticalOptions="Fill"
-           Margin="7"
-           BackgroundColor="White"
-           OutlineColor="#137ad3">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            
-            <Frame Grid.Row="0" Padding="5" HasShadow="false"
-                   OutlineColor="#137ad3" CornerRadius="0">
-                <Editor Text="{Binding Comment}" />
-            </Frame>
+    <Grid Margin="7">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Frame Grid.Row="0" Padding="5" HasShadow="false"
+               OutlineColor="#137ad3" CornerRadius="0">
+            <Editor Text="{Binding Comment}" />
+        </Frame>
 
-            <Frame Grid.Row="1" Padding="0" HasShadow="false"
-                   OutlineColor="#137ad3" CornerRadius="0">
-               <Grid>
-                    <Image HorizontalOptions="Fill"
-                           VerticalOptions="Fill"
-                           IsVisible="{Binding ShowPhoto}"
-                           Source="{Binding PhotoSource}"
-                           Aspect="AspectFill">
-                    </Image>
-                    
-                    <Image HorizontalOptions="Fill"
-                           VerticalOptions="Fill"
-                           Source="AddPhoto"
-                           IsVisible="{Binding ShowImagePlaceholder}">
-                        <Image.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding TakePhotoCommand}"/>
-                        </Image.GestureRecognizers>
-                    </Image>
-                </Grid>
-            </Frame>
-            
-            <Button Grid.Row="2" 
-                    Text="Post"
-                    FontAttributes="Bold"
-                    BackgroundColor="#137ad3"
-                    TextColor="White"
-                    Command="{Binding PostCommand}"
-                    IsEnabled="{Binding CanPost}"/>
+        <Frame Grid.Row="1" Padding="0" HasShadow="false"
+               OutlineColor="#137ad3" CornerRadius="0">
+           <Grid>
+                <Image HorizontalOptions="Fill"
+                       VerticalOptions="Fill"
+                       IsVisible="{Binding ShowPhoto}"
+                       Source="{Binding PhotoSource}"
+                       Aspect="AspectFill">
+                </Image>
+                
+                <Image HorizontalOptions="Fill"
+                       VerticalOptions="Fill"
+                       Source="AddPhoto"
+                       IsVisible="{Binding ShowImagePlaceholder}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding TakePhotoCommand}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+            </Grid>
+        </Frame>
+        
+        <Button Grid.Row="2" 
+                Text="Post"
+                FontAttributes="Bold"
+                BackgroundColor="#137ad3"
+                TextColor="White"
+                Command="{Binding PostCommand}"/>
+
+        <Grid Grid.RowSpan="3" 
+              IsVisible="{Binding IsPosting}"
+              BackgroundColor="#B0000000"
+              Margin="-7">
+            <ActivityIndicator IsRunning="true"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Color="White"/>
         </Grid>
-    </Frame>
+    </Grid>
 </ContentPage>

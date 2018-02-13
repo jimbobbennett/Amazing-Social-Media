@@ -25,7 +25,6 @@ namespace AmazingSocialMedia
                 {
                     RaisePropertyChanged(nameof(ShowPhoto));
                     RaisePropertyChanged(nameof(ShowImagePlaceholder));
-                    RaisePropertyChanged(nameof(CanPost));
                 }
             }
         }
@@ -34,11 +33,14 @@ namespace AmazingSocialMedia
         public string Comment
         {
             get => _comment;
-            set
-            {
-                if (Set(ref _comment, value))
-                    RaisePropertyChanged(nameof(CanPost));
-            }
+            set => Set(ref _comment, value);
+        }
+
+        private bool _isPosting;
+        public bool IsPosting
+        {
+            get => _isPosting;
+            set => Set(ref _isPosting, value);
         }
 
         public ICommand TakePhotoCommand { get; } 
@@ -54,24 +56,39 @@ namespace AmazingSocialMedia
 
         private async Task Post()
         {
-            if (await _contentModerator.ContainsProfanity(Comment))
+            try
             {
-                await Application.Current.MainPage.DisplayAlert("Rude!", "Your comment contains naughty language!", "OK");
-                Comment = "";
-            }
+                IsPosting = true;
 
-            if (await _contentModerator.IsFace(_photo) &&
-                await _contentModerator.IsDuckFace(_photo))
-            {
-                await Application.Current.MainPage.DisplayAlert("D'oh!", "DuckFace is not allowed!", "OK");
+                if (await _contentModerator.ContainsProfanity(Comment))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Rude!", "Your comment contains naughty language!", "OK");
+                    Comment = "";
+                    return;
+                }
+
+                if (await _contentModerator.IsFace(_photo) &&
+                    await _contentModerator.IsDuckFace(_photo))
+                {
+                    await Application.Current.MainPage.DisplayAlert("D'oh!", "DuckFace is not allowed!", "OK");
+                    PhotoSource = null;
+                    _photo = null;
+                    return;
+                }
+
+                await Application.Current.MainPage.DisplayAlert("Posted", "Your image has been posted!", "OK");
+                Comment = "";
                 PhotoSource = null;
+                _photo = null;
+            }
+            finally
+            {
+                IsPosting = false;
             }
         }
 
         public bool ShowImagePlaceholder => !ShowPhoto;
         public bool ShowPhoto => _photoSource != null;
-
-        public bool CanPost => true;//ShowPhoto && !string.IsNullOrEmpty(Comment);
 
     }
 }
